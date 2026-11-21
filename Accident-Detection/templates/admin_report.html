@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Incident Report | SENTINEL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <header class="dashboard-topbar">
+      <div class="brand-inline">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <p class="brand-kicker">Incident report</p>
+          <h1>SENTINEL</h1>
+        </div>
+      </div>
+      <div class="dashboard-header-actions">
+        <span class="welcome-badge">Welcome, {{ admin_user }}</span>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn ghost small-btn">Dashboard</a>
+        <a href="{{ url_for('admin_download_report', incident_id=report.id) }}" class="btn primary small-btn">Download PDF</a>
+      </div>
+    </header>
+
+    <main class="dashboard-grid single-column">
+      <section class="dashboard-panel wide-panel">
+        <div class="panel-header">
+          <h2>Detailed emergency report</h2>
+        </div>
+        <div class="incident-item">
+          <div class="incident-header">
+            <span class="severity-pill {% if 'HIGH' in report.severity %}high{% elif 'MEDIUM' in report.severity %}medium{% else %}low{% endif %}">{{ report.severity }}</span>
+            <span class="timestamp">{{ report.created_at }}</span>
+          </div>
+          <p class="incident-summary">{{ report.summary }}</p>
+          <div class="incident-meta">
+            <span>Location: {{ report.location }}</span>
+            <span>Weather: {{ report.weather }}</span>
+            <span>Temperature: {{ '%.1f'|format(report.temperature) }}°C</span>
+            <span>Status: {{ report.status }}</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

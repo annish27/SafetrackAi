@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Incident History | SENTINEL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <header class="dashboard-topbar">
+      <div class="brand-inline">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <p class="brand-kicker">Incident log</p>
+          <h1>SENTINEL</h1>
+        </div>
+      </div>
+      <div class="dashboard-header-actions">
+        <span class="welcome-badge">Welcome, {{ admin_user }}</span>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn ghost small-btn">Dashboard</a>
+        <a href="{{ url_for('admin_logout') }}" class="btn primary small-btn">Logout</a>
+      </div>
+    </header>
+
+    <main class="dashboard-grid single-column">
+      <section class="dashboard-panel wide-panel">
+        <div class="panel-header">
+          <h2>Recorded incidents</h2>
+        </div>
+
+        {% if incidents %}
+        <div class="incident-list">
+          {% for incident in incidents %}
+          <article class="incident-item">
+            <div class="incident-header">
+              <span class="severity-pill {% if 'HIGH' in incident.severity %}high{% elif 'MEDIUM' in incident.severity %}medium{% else %}low{% endif %}">{{ incident.severity or 'Unknown severity' }}</span>
+              <span class="timestamp">{{ incident.created_at }}</span>
+            </div>
+            <p class="incident-summary">{{ incident.summary }}</p>
+            <div class="incident-meta">
+              <span>Location: {{ incident.location }}</span>
+              <span>Weather: {{ incident.weather }}</span>
+              <span>Temp: {{ '%.1f'|format(incident.temperature) }}°C</span>
+              <span>Status: {{ incident.status }}</span>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-state">No incidents recorded yet.</p>
+        {% endif %}
+      </section>
+    </main>
+  </div>
+</body>
+</html>

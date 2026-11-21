@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Route Map | SENTINEL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <header class="dashboard-topbar">
+      <div class="brand-inline">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <p class="brand-kicker">Route planner</p>
+          <h1>SENTINEL</h1>
+        </div>
+      </div>
+      <div class="dashboard-header-actions">
+        <span class="welcome-badge">Welcome, {{ admin_user }}</span>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn ghost small-btn">Dashboard</a>
+        <a href="{{ url_for('admin_logout') }}" class="btn primary small-btn">Logout</a>
+      </div>
+    </header>
+
+    <main class="dashboard-grid single-column">
+      <section class="dashboard-panel wide-panel">
+        <div class="panel-header">
+          <h2>Emergency route map</h2>
+        </div>
+        <div id="routeMap" class="route-map"></div>
+      </section>
+
+      <section class="dashboard-panel wide-panel">
+        <div class="panel-header">
+          <h2>Recommended route order</h2>
+        </div>
+        <div class="incident-list">
+          {% for item in route_plan %}
+          <article class="incident-item">
+            <div class="incident-header">
+              <span class="severity-pill {% if item.type == 'police' %}low{% else %}medium{% endif %}">{{ item.type }}</span>
+              <span class="timestamp">{{ '%.2f km'|format(item.distance_km) }}</span>
+            </div>
+            <p class="incident-summary">{{ item.name }}</p>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const accidentLat = {{ accident_location[0] }};
+    const accidentLng = {{ accident_location[1] }};
+    const routePlan = {{ route_plan | tojson }};
+
+    const map = L.map('routeMap').setView([accidentLat, accidentLng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const accidentMarker = L.circleMarker([accidentLat, accidentLng], {
+      radius: 12,
+      color: '#ff3b5c',
+      fillColor: '#ff3b5c',
+      fillOpacity: 0.85
+    }).addTo(map);
+    accidentMarker.bindPopup('<strong>Accident site</strong>');
+
+    routePlan.forEach((item, index) => {
+      const marker = L.circleMarker([item.lat, item.lon], {
+        radius: 9,
+        color: item.type === 'police' ? '#2ecc71' : '#4cc9f0',
+        fillColor: item.type === 'police' ? '#2ecc71' : '#4cc9f0',
+        fillOpacity: 0.7
+      }).addTo(map);
+      marker.bindPopup(`<strong>${item.name}</strong><br>${item.type}<br>${item.distance_km.toFixed(2)} km away`);
+
+      const polyline = L.polyline([
+        [accidentLat, accidentLng],
+        [item.lat, item.lon]
+      ], {
+        color: '#2ecc71',
+        weight: 4,
+        opacity: 0.8
+      }).addTo(map);
+      polyline.bindPopup(`${index + 1}. ${item.name}`);
+    });
+  </script>
+</body>
+</html>

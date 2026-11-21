@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | SENTINEL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <header class="dashboard-topbar">
+      <div class="brand-inline">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <p class="brand-kicker">Admin console</p>
+          <h1>SENTINEL</h1>
+        </div>
+      </div>
+
+      <div class="dashboard-header-actions">
+        <span class="welcome-badge">Welcome, {{ admin_user }}</span>
+        <a href="{{ url_for('home') }}" class="btn ghost small-btn">System view</a>
+        <a href="{{ url_for('admin_logout') }}" class="btn primary small-btn">Logout</a>
+      </div>
+    </header>
+
+    <main class="dashboard-grid">
+      <section class="dashboard-panel wide-panel">
+        <div class="panel-header">
+          <h2>Overview</h2>
+          <span class="status-badge {% if dashboard.accident_detected %}alert{% elif dashboard.running %}live{% else %}idle{% endif %}">
+            {% if dashboard.accident_detected %}Incident active{% elif dashboard.running %}Processing{% else %}Idle{% endif %}
+          </span>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-box">
+            <p>Model status</p>
+            <strong>{{ 'Ready' if dashboard.model_ready else 'Loading' }}</strong>
+          </article>
+          <article class="stat-box">
+            <p>Vehicles</p>
+            <strong>{{ dashboard.vehicles }}</strong>
+          </article>
+          <article class="stat-box">
+            <p>Collision count</p>
+            <strong>{{ dashboard.collision_count }}</strong>
+          </article>
+          <article class="stat-box">
+            <p>Max speed</p>
+            <strong>{{ '%.1f'|format(dashboard.max_speed) }} px/s</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="dashboard-panel">
+        <div class="panel-header">
+          <h2>Severity</h2>
+        </div>
+        <div class="severity-block {% if 'HIGH' in dashboard.severity %}high{% elif 'MEDIUM' in dashboard.severity %}medium{% elif 'LOW' in dashboard.severity %}low{% endif %}">
+          {{ dashboard.severity or 'No active incident' }}
+        </div>
+      </section>
+
+      <section class="dashboard-panel">
+        <div class="panel-header">
+          <h2>Environment</h2>
+        </div>
+        <dl class="detail-list">
+          <div><dt>Weather</dt><dd>{{ dashboard.weather }}</dd></div>
+          <div><dt>Temperature</dt><dd>{{ '%.1f'|format(dashboard.temperature) }}°C</dd></div>
+          <div><dt>Frame</dt><dd>{{ dashboard.frame }}</dd></div>
+          <div><dt>Email alert</dt><dd>{{ 'Sent' if dashboard.email_sent else 'Pending' }}</dd></div>
+        </dl>
+      </section>
+
+      <section class="dashboard-panel wide-panel">
+        <div class="panel-header">
+          <h2>Nearest response units</h2>
+        </div>
+        <div class="response-grid">
+          <div class="response-card police">
+            <span class="tag police">Police</span>
+            <h3>{{ dashboard.police.name if dashboard.police else 'No nearby police station' }}</h3>
+            <p>{{ '%.2f km away'|format(dashboard.police.distance_km) if dashboard.police and dashboard.police.distance_km is not none else 'Awaiting query' }}</p>
+          </div>
+          <div class="response-card hospital">
+            <span class="tag hospital">Hospital</span>
+            <h3>{{ dashboard.hospital.name if dashboard.hospital else 'No nearby hospital' }}</h3>
+            <p>{{ '%.2f km away'|format(dashboard.hospital.distance_km) if dashboard.hospital and dashboard.hospital.distance_km is not none else 'Awaiting query' }}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-panel wide-panel">
+        <div class="panel-header">
+          <h2>Event log</h2>
+          <a href="{{ url_for('admin_incidents') }}" class="btn ghost small-btn">View all incidents</a>
+        </div>
+        <ul class="event-list">
+          {% for item in dashboard.vehicle_events %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </section>
+
+      <section class="dashboard-panel wide-panel">
+        <div class="panel-header">
+          <h2>Latest incidents</h2>
+        </div>
+        <div class="incident-list">
+          {% for incident in incidents %}
+          <article class="incident-item">
+            <div class="incident-header">
+              <span class="severity-pill {% if 'HIGH' in incident.severity %}high{% elif 'MEDIUM' in incident.severity %}medium{% else %}low{% endif %}">{{ incident.severity or 'Unknown severity' }}</span>
+              <span class="timestamp">{{ incident.created_at }}</span>
+            </div>
+            <p class="incident-summary">{{ incident.summary }}</p>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+
+      {% if dashboard.error %}
+      <section class="dashboard-panel wide-panel warning-panel">
+        <div class="panel-header">
+          <h2>System alert</h2>
+        </div>
+        <p class="warning-text">{{ dashboard.error }}</p>
+      </section>
+      {% endif %}
+    </main>
+  </div>
+</body>
+</html>

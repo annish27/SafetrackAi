@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #27272a;
+  /* Lighter zinc-800 */
+  --color-foreground: #fafafa;
+  --color-muted: #3f3f46;
+  --color-muted-foreground: #d4d4d8;
+  --color-popover: #27272a;
+  --color-popover-foreground: #fafafa;
+  --color-card: #27272a;
+  --color-card-foreground: #fafafa;
+  --color-border: #52525b;
+  --color-input: #52525b;
+  --color-primary: #fafafa;
+  --color-primary-foreground: #27272a;
+  --color-secondary: #3f3f46;
+  --color-secondary-foreground: #fafafa;
+  --color-accent: #3f3f46;
+  --color-accent-foreground: #fafafa;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #fafafa;
+  --color-ring: #fafafa;
+  --radius-md: 0.75rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: 'Inter', sans-serif;
+    /* Sophisticated dark grey gradient, notably lighter */
+    background: radial-gradient(circle at top, #3f3f46, #27272a 80%);
+    background-attachment: fixed;
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
+/* Custom utilities for dark glassmorphism and animations */
+@utility glass {
+  background-color: rgba(9, 9, 11, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@utility glass-card {
+  background: linear-gradient(180deg, rgba(39, 39, 42, 0.3) 0%, rgba(24, 24, 27, 0.5) 100%);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+}
+
+@utility text-gradient {
+  background: linear-gradient(to right, #ffffff, #a1a1aa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@utility hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(39, 39, 42, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(161, 161, 170, 0.2);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(161, 161, 170, 0.4);
+}
+
+/* ── Leaflet map containment — prevent it from breaking the flex layout ── */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+}
+
+/* Ensure Leaflet controls sit above the map but below the app sidebar */
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 400 !important;
+}
+
+.leaflet-pane {
+  z-index: 200 !important;
+}

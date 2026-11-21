@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login | SENTINEL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="auth-body">
+  <div class="auth-shell">
+    <div class="auth-card">
+      <div class="brand-inline">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <p class="brand-kicker">AI Emergency Response</p>
+          <h1>SENTINEL</h1>
+        </div>
+      </div>
+
+      <div class="auth-header">
+        <h2>Admin portal</h2>
+        <p>Sign in to access the response dashboard.</p>
+      </div>
+
+      {% if error %}
+      <div class="auth-error">{{ error }}</div>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('admin_login') }}" class="auth-form">
+        <label>
+          <span>Username</span>
+          <input type="text" name="username" placeholder="admin" required />
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" name="password" placeholder="••••••••" required />
+        </label>
+        <button type="submit" class="btn primary auth-btn">Log in</button>
+      </form>
+
+      <div class="admin-meta">
+        <a href="{{ url_for('home') }}">Back to system</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

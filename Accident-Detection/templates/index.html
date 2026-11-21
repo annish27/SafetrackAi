@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentinel · Accident Detection Command</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <p class="brand-kicker">AI Emergency Response</p>
+          <h1>SENTINEL</h1>
+        </div>
+      </div>
+      <div class="status-cluster">
+        <div class="pill" id="modelPill">
+          <span class="dot"></span>
+          <span>Model loading</span>
+        </div>
+        <div class="pill" id="jobPill">
+          <span class="dot idle"></span>
+          <span>Standby</span>
+        </div>
+        <div class="clock" id="clock">--:--:--</div>
+      </div>
+    </header>
+
+    <section class="alert-banner hidden" id="alertBanner" role="alert">
+      <strong>ACCIDENT DETECTED</strong>
+      <span id="alertCopy">Collision confirmed. Emergency services identified.</span>
+    </section>
+
+    <main class="grid">
+      <section class="feed-panel">
+        <div class="panel-head">
+          <h2>Live inference feed</h2>
+          <span class="chip" id="frameChip">Frame 0</span>
+        </div>
+        <div class="viewport" id="viewport">
+          <img id="liveFeed" alt="Detection video stream" />
+          <div class="viewport-empty" id="viewportEmpty">
+            <p>Upload a dashcam or CCTV clip, or run a sample video to begin detection.</p>
+          </div>
+          <div class="scanline"></div>
+        </div>
+        <form class="controls" id="uploadForm">
+          <label class="dropzone" id="dropzone">
+            <input type="file" id="videoFile" name="video" accept="video/mp4,video/avi,video/mov,video/*" hidden />
+            <span id="fileLabel">Drop a video or click to choose</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="sendEmail" />
+            <span>Dispatch email alert</span>
+          </label>
+          <button type="submit" class="btn primary" id="runBtn" disabled>Run detection</button>
+        </form>
+        <div class="samples">
+          <span>Demo clips</span>
+          <button type="button" class="btn ghost" data-sample="testing.mp4">testing.mp4</button>
+          <button type="button" class="btn ghost" data-sample="testing2.mp4">testing2.mp4</button>
+        </div>
+      </section>
+
+      <aside class="side">
+        <section class="metrics">
+          <article class="metric">
+            <p>Vehicles</p>
+            <strong id="mVehicles">0</strong>
+          </article>
+          <article class="metric">
+            <p>Collisions</p>
+            <strong id="mCollisions">0</strong>
+          </article>
+          <article class="metric">
+            <p>Max speed</p>
+            <strong id="mSpeed">0.0</strong>
+            <em>px/s</em>
+          </article>
+          <article class="metric">
+            <p>Severity</p>
+            <strong id="mSeverity" class="sev">—</strong>
+          </article>
+        </section>
+
+        <section class="card">
+          <h3>Incident context</h3>
+          <dl class="kv">
+            <div><dt>Location</dt><dd id="locValue">19.070, 72.877 · Mumbai</dd></div>
+            <div><dt>Weather</dt><dd id="weatherValue">Awaiting detection</dd></div>
+            <div><dt>Telemetry</dt><dd id="eventsValue">Simulated CAN bus idle</dd></div>
+          </dl>
+        </section>
+
+        <section class="card">
+          <h3>Nearest response units</h3>
+          <div class="unit">
+            <span class="unit-tag police">Police</span>
+            <p id="policeName">Not queried yet</p>
+            <small id="policeDist"></small>
+          </div>
+          <div class="unit">
+            <span class="unit-tag hospital">Hospital</span>
+            <p id="hospitalName">Not queried yet</p>
+            <small id="hospitalDist"></small>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>Event log</h3>
+          <ol class="log" id="eventLog">
+            <li>Command center online. Waiting for video input.</li>
+          </ol>
+        </section>
+      </aside>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
